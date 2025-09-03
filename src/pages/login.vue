@@ -1,7 +1,7 @@
 <template>
-  <HelloWorld />
+  <login-form />
 </template>
 
 <script lang="ts" setup>
-  //
+
 </script>
