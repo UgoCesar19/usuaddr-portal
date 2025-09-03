@@ -21,6 +21,7 @@
           :readonly="loading"
           :rules="[required]"
           label="Password"
+          type="password"
           placeholder="Enter your password"
           clearable
         ></v-text-field>
@@ -38,13 +39,17 @@
         >
           Sign In
         </v-btn>
+        <p class="text-center mt-5">Do not have an account?</p>
+        <p class="text-center"><router-link to="/user">Create it!</router-link></p>
       </v-form>
     </v-card>
   </v-sheet>
 </template>
 <script setup>
   import { ref } from 'vue';
-  import authApi from '../services/AuthService';
+  import { useAuthStore } from '@/stores/auth';
+
+  const authStore = useAuthStore();
 
   const form = ref(false);
   const email = ref(null);
@@ -55,7 +60,7 @@
     if (!form.value)
       return;
     
-    await authApi.login(email.value, password.value);
+    await authStore.login(email.value, password.value);
 
     loading.value = false;
 

@@ -7,6 +7,7 @@
         @submit.prevent="onSubmit"
       >
         <v-text-field
+          v-if="usuarioEditado"
           v-model="id"
           :readonly="loading"
           :rules="[required]"
@@ -58,12 +59,12 @@
         </v-btn>
 
         <v-btn
+          @click="goToLogin"
           class="mt-3"
-          :disabled="!form"
           :loading="loading"
           color="warning"
           size="large"
-          type="submit"
+          type="button"
           variant="elevated"
           block
         >
@@ -72,13 +73,14 @@
       </v-form>
     </v-card>
 </template>
-<script setup>
+<script setup lang="ts">
   import { ref } from 'vue';
-  import Usuario from '../model/Usuario'
+  import router from "@/router";
+  import usuarioApi from "@/services/UsuarioService";
 
-  const props = defineProps({
-    usuario: Usuario
-  });
+  const usuarioEditado = ref(router.options.history.state.usuario);
+
+  console.log("Usuario editado: " + JSON.stringify(usuarioEditado.value));
 
   const form = ref(false);
   const id = ref(null);
@@ -87,26 +89,29 @@
   const password = ref(null);
   const loading = ref(false);
 
-  function onSubmit () {
+  async function onSubmit () {
     if (!form.value)
         return;
     
     loading.value = true;
 
-    setTimeout(() => {
-        loading.value = false;
-        const userData = {
-            id: id.value,
-            name: name.value,
-            email: email.value,
-            password: password.value
-        };
-        alert(JSON.stringify(userData, null, 2));
-    }, 2000);
+    await usuarioApi.registrar({
+      nome: name.value,
+      email: email.value,
+      senha: password.value
+    });
+
+    loading.value = false;
+
+    goToLogin();
 
   }
+
+  function goToLogin() {
+    router.push('/login');
+  }
   
-  function required (v) {
+  function required (v: any) {
     return !!v || 'Field is required';
   }
 
