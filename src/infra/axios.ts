@@ -41,7 +41,7 @@ appAxios.interceptors.response.use(
             snackbar.show('Erro inesperado: ' + error.message, 'error');
         }
 
-        return Promise.reject(error)
+        return Promise.reject(error);
     }
 );
 
@@ -50,9 +50,8 @@ appAxios.interceptors.response.use(
     (error) => {
         if (error.response && [401, 403].includes(error.response.status)) {
             router.push('/login');
-        } else {
-            return Promise.reject(error);
         }
+        return Promise.reject(error);
     }
 );
 

@@ -7,8 +7,8 @@
         @submit.prevent="onSubmit"
       >
         <v-text-field
-          v-if="usuarioEditado"
-          v-model="id"
+          v-if="usuario && usuario.id"
+          v-model="usuario.id"
           :readonly="loading"
           :rules="[required]"
           class="mb-2"
@@ -17,7 +17,7 @@
         ></v-text-field>
 
         <v-text-field
-          v-model="name"
+          v-model="usuario.nome"
           :readonly="loading"
           :rules="[required]"
           class="mb-2"
@@ -26,7 +26,7 @@
         ></v-text-field>
 
         <v-text-field
-          v-model="email"
+          v-model="usuario.email"
           :readonly="loading"
           :rules="[required]"
           class="mb-2"
@@ -35,7 +35,7 @@
         ></v-text-field>
 
         <v-text-field
-          v-model="password"
+          v-model="usuario.senha"
           :readonly="loading"
           :rules="[required]"
           label="Password"
@@ -77,16 +77,14 @@
   import { ref } from 'vue';
   import router from "@/router";
   import usuarioApi from "@/services/UsuarioService";
+  import type { Usuario } from '@/model/Usuario';
 
-  const usuarioEditado = ref(router.options.history.state.usuario);
+  const usuario = ref<Usuario>(router.options.history.state.usuario as unknown as Usuario ?? {} as Usuario);
 
-  console.log("Usuario editado: " + JSON.stringify(usuarioEditado.value));
+  console.log("Usuario editado: " + JSON.stringify(usuario.value));
 
   const form = ref(false);
-  const id = ref(null);
-  const name = ref(null);
-  const email = ref(null);
-  const password = ref(null);
+  
   const loading = ref(false);
 
   async function onSubmit () {
@@ -95,11 +93,7 @@
     
     loading.value = true;
 
-    await usuarioApi.registrar({
-      nome: name.value,
-      email: email.value,
-      senha: password.value
-    });
+    await usuarioApi.registrar(usuario.value);
 
     loading.value = false;
 

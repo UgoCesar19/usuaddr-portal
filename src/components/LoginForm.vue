@@ -8,7 +8,7 @@
         @submit.prevent="onSubmit"
       >
         <v-text-field
-          v-model="email"
+          v-model="credenciais.email"
           :readonly="loading"
           :rules="[required]"
           class="mb-2"
@@ -17,7 +17,7 @@
         ></v-text-field>
 
         <v-text-field
-          v-model="password"
+          v-model="credenciais.senha"
           :readonly="loading"
           :rules="[required]"
           label="Password"
@@ -45,28 +45,30 @@
     </v-card>
   </v-sheet>
 </template>
-<script setup>
+<script setup lang="ts">
   import { ref } from 'vue';
   import { useAuthStore } from '@/stores/auth';
+  import type { Credenciais } from '@/model/Credenciais';
 
   const authStore = useAuthStore();
 
   const form = ref(false);
-  const email = ref(null);
-  const password = ref(null);
+  const credenciais = ref<Credenciais>({} as Credenciais);
   const loading = ref(false);
 
   async function onSubmit () {
     if (!form.value)
       return;
     
-    await authStore.login(email.value, password.value);
+    loading.value = true;
+
+    await authStore.login(credenciais.value.email, credenciais.value.senha);
 
     loading.value = false;
 
   }
 
-  function required (v) {
+  function required (v: any) {
     return !!v || 'Field is required'
   }
 

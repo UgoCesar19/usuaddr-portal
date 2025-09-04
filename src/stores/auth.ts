@@ -3,6 +3,7 @@ import { appAxios } from "@/infra/axios"
 import { useSnackbarStore } from "@/stores/snackbar"
 import type { AuthResponse } from "@/model/AuthResponse"
 import type { Credenciais } from "@/model/Credenciais"
+import type { AxiosResponse } from 'axios'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -20,9 +21,9 @@ export const useAuthStore = defineStore('auth', {
       const snackbar = useSnackbarStore()
 
       try {
-        const response = await appAxios.post<AuthResponse>('/autenticar', credenciais)
-        this.authResponse = response.data
-        snackbar.show('Usuário autenticado!', 'success')
+        const response: AxiosResponse = await appAxios.post<AuthResponse>('/autenticar', credenciais);
+        this.authResponse = response.data;
+        snackbar.show('Usuário autenticado!', 'success');
       } catch (e: any) {
         if (e.response) {
           console.log("Erro na autenticação: " + JSON.stringify(e.response.data))
